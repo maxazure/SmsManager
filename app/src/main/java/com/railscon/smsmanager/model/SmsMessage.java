@@ -1,4 +1,4 @@
-package com.railscon.smsmanager;
+package com.railscon.smsmanager.model;
 
 /**
  * Created by maxazure on 26/03/2018.

@@ -35,7 +35,7 @@
 
     <Button
             android:id="@+id/btnRun"
-        android:onClick="onClickStart"
+            android:onClick="onClickStart"
             android:layout_weight="1"
             android:layout_height="match_parent"
             android:layout_width="0dp"

@@ -8,7 +8,7 @@ import android.os.IBinder;
 import android.os.SystemClock;
 
 import com.railscon.smsmanager.SMSServiceReceiver;
-import com.railscon.smsmanager.SmsMessage;
+import com.railscon.smsmanager.model.SmsMessage;
 import com.railscon.smsmanager.retrofit2.RetrofitClient;
 import com.railscon.smsmanager.retrofit2.SoService;
 
@@ -71,11 +71,9 @@ public class SmsService extends Service {
     private void getPhones() {
 
         Retrofit retrofit = RetrofitClient.getClient();
-
         SoService service = retrofit.create(SoService.class);
 
         Call<SmsMessage[]> call = service.getPhoneRecords();
-
         call.enqueue(new Callback<SmsMessage[]>() {
                          @Override
                          public void onResponse(Call<SmsMessage[]> call, final Response<SmsMessage[]> response) {
