@@ -3,4 +3,6 @@
     <string name="start">Start</string>
     <string name="setting">Setting</string>
     <string name="title_activity_main2">Main2Activity</string>
+    <string name="interval">Interval</string>
+    <string name="keep_screen_light">Keep Screen Light.</string>
 </resources>
