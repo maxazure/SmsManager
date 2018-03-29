@@ -5,8 +5,10 @@ import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.railscon.smsmanager.Helper.SmsHelper;
 import com.railscon.smsmanager.Services.SmsService;
@@ -27,6 +29,11 @@ public class MainActivity extends AppCompatActivity {
         PackageManager pm = getPackageManager();
         boolean permission = (PackageManager.PERMISSION_GRANTED ==
                 pm.checkPermission("android.permission.READ_SMS", "com.railscon.smsmanager"));
+
+
+        ActivityCompat.requestPermissions(MainActivity.this, new String[]{"android.permission.READ_SMS"}, REQUEST_CODE_ASK_PERMISSIONS);
+
+
         if (permission) {
 
         }else {
@@ -51,8 +58,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickStart(View view) {
+      //  SmsHelper.sendSMS("0224943531","hello");
 
 
+        Toast.makeText(this,"hello",Toast.LENGTH_SHORT).show();
+        Log.d("maxazure","maxazure1111222");
         Intent intent = new Intent(this, SmsService.class);
         startService(intent);
 //        String txt = "Hi Jay, a friendly reminder your appointment will be at 7 pm on 24 mar. If you need to make any changes to this appointment please CALL Jim on 088 999-7777. This is an automated message, please do not reply via text.";

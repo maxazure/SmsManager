@@ -6,7 +6,9 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.SystemClock;
+import android.util.Log;
 
+import com.railscon.smsmanager.Helper.TimeHelper;
 import com.railscon.smsmanager.SMSServiceReceiver;
 import com.railscon.smsmanager.model.SmsMessage;
 import com.railscon.smsmanager.retrofit2.RetrofitClient;
@@ -25,11 +27,17 @@ import static com.railscon.smsmanager.Helper.SmsHelper.sendSMS;
 public class SmsService extends Service {
 
     private List<SmsMessage> smsList;
+    private String lastNumber="";
+
+    public String getLastnumber(){
+        return lastNumber;
+    }
+
+    public void setLastNumber(String num){
+        this.lastNumber = num;
+    }
     public SmsService() {
-
        // initList();
-
-
     }
 
     private void initList(){
@@ -53,18 +61,17 @@ public class SmsService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
 
-
-
         AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        int interval = 15*1000*60;
+        int interval = 1*1000*60;
         long triggerAtTime = SystemClock.elapsedRealtime() + interval;
         Intent i = new Intent(this, SMSServiceReceiver.class);
         PendingIntent pi = PendingIntent.getBroadcast(this, 0, i, 0);
         manager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtTime, pi);
 
-
         getPhones();
+
         return super.onStartCommand(intent, flags, startId);
+
     }
 
 
@@ -73,11 +80,14 @@ public class SmsService extends Service {
         Retrofit retrofit = RetrofitClient.getClient();
         SoService service = retrofit.create(SoService.class);
 
+        Log.d("maxazure","getphones");
         Call<SmsMessage[]> call = service.getPhoneRecords();
         call.enqueue(new Callback<SmsMessage[]>() {
                          @Override
                          public void onResponse(Call<SmsMessage[]> call, final Response<SmsMessage[]> response) {
 
+
+                             Log.d("maxazure",Integer.toString(response.body().length));
 
                              new Thread(new Runnable() {
                                  @Override
@@ -85,8 +95,14 @@ public class SmsService extends Service {
                                      for (SmsMessage smsMessage : response.body()) {
 
                                          try {
-                                             sendSMS(smsMessage.getNumber(),smsMessage.getMessageBody());
-                                             Thread.sleep(1000);
+                                             if(!getLastnumber().equals(smsMessage.getNumber())){
+                                                 sendSMS(smsMessage.getNumber(),smsMessage.getMessageBody()+ TimeHelper.getNowTime());
+                                                 setLastNumber(smsMessage.getNumber());
+                                                 Log.d("maxazure",smsMessage.getNumber()+ TimeHelper.getNowTime());
+                                                 Thread.sleep(5000);
+                                             }
+
+
                                          } catch (InterruptedException e) {
                                              e.printStackTrace();
                                          }
@@ -99,6 +115,8 @@ public class SmsService extends Service {
                          @Override
                          public void onFailure(Call<SmsMessage[]> call, Throwable t) {
 
+                             Log.d("maxazure","get Failure");
+                             Log.d("maxazure",t.getMessage());
                          }
 
                      });
@@ -115,8 +133,7 @@ public class SmsService extends Service {
     @Override
     public void onDestroy() {
         // The service is no longer used and is being destroyed
-
-        sendSMS("5556","Over!");
+        //
     }
 
 }
